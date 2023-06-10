@@ -27,7 +27,6 @@ class MyApp extends StatelessWidget {
 }
 
 class MyAppState extends ChangeNotifier {
-
   var current = WordPair.random();
 
   void getNext() {
@@ -57,58 +56,62 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   Widget build(BuildContext context) {
-    Widget page;
-    switch (selectedIndex) {
-      case 0:
-        page = GeneratorPage();
-        break;
-      case 1:
-        page = FavoritesPage();
-        break;
-      case 2:
-        page = AllPage();
-        break;
-      default:
-        throw UnimplementedError('No widget for $selectedIndex');
-    }
+    // Widget page;
+    // switch (selectedIndex) {
+    //   case 0:
+    //     page = GeneratorPage();
+    //     break;
+    //   case 1:
+    //     page = FavoritesPage();
+    //     break;
+    //   case 2:
+    //     page = AllPage();
+    //     break;
+    //   default:
+    //     throw UnimplementedError('No widget for $selectedIndex');
+    // }
 
     return LayoutBuilder(builder: (context, constraints) {
       return Scaffold(
-        body: Row(
-          children: [
-            SafeArea(
-              child: NavigationRail(
-                extended: constraints.maxWidth >= 600,
-                destinations: [
-                  NavigationRailDestination(
-                    icon: Icon(Icons.home),
-                    label: Text('Home'),
-                  ),
-                  NavigationRailDestination(
-                    icon: Icon(Icons.favorite),
-                    label: Text('Favorites'),
-                  ),
-                  NavigationRailDestination(
-                    icon: Icon(Icons.all_inclusive),
-                    label: Text('All'),
-                  ),
-                ],
-                selectedIndex: selectedIndex,
-                onDestinationSelected: (value) {
-                  setState(() {
-                    selectedIndex = value;
-                  });
-                },
-              ),
-            ),
-            Expanded(
-              child: Container(
-                color: Color.fromARGB(255, 255, 167, 179),
-                child: page,
-              ),
-            ),
-          ],
+        appBar: AppBar(
+          title: Text('r/all'),
         ),
+        body: AllPage(),
+        // body: Row(
+        //   children: [
+        //     SafeArea(
+        //       child: NavigationRail(
+        //         extended: constraints.maxWidth >= 600,
+        //         destinations: [
+        //           NavigationRailDestination(
+        //             icon: Icon(Icons.home),
+        //             label: Text('Home'),
+        //           ),
+        //           NavigationRailDestination(
+        //             icon: Icon(Icons.favorite),
+        //             label: Text('Favorites'),
+        //           ),
+        //           NavigationRailDestination(
+        //             icon: Icon(Icons.all_inclusive),
+        //             label: Text('All'),
+        //           ),
+        //         ],
+        //         selectedIndex: selectedIndex,
+        //         onDestinationSelected: (value) {
+        //           setState(() {
+        //             selectedIndex = value;
+        //           });
+        //         },
+        //       ),
+        //     ),
+        //     Expanded(
+        //       child: Container(
+        //         color: Color.fromARGB(255, 255, 167, 179),
+        //         child: page,
+        //       ),
+        //     ),
+        //   ],
+        // ),
       );
     });
   }
@@ -144,44 +147,107 @@ class AllPage extends StatelessWidget {
   Widget build(BuildContext context) {
     var theme = Theme.of(context);
 
-    return ListView(
-      children: [
-        PostCard(theme: theme),
-        PostCard(theme: theme),
-        PostCard(theme: theme),
-        PostCard(theme: theme),
-        PostCard(theme: theme),
-      ],
+    return ListView.builder(
+      itemCount: 20,
+      itemBuilder: (context, index) {
+        return PostCard(theme: theme, index: index);
+      },
     );
   }
 }
 
-void _onDismissed() {}
-
-class PostCard extends StatelessWidget {
+class PostCard extends StatefulWidget {
   const PostCard({
     super.key,
     required this.theme,
+    required this.index,
   });
 
   final ThemeData theme;
+  final int index;
+
+  @override
+  State<PostCard> createState() => _PostCardState();
+}
+
+enum VoteState { upvoted, downvoted, none }
+
+class _PostCardState extends State<PostCard> {
+  VoteState voteState = VoteState.none;
+
+  void _onDismissed() {}
 
   @override
   Widget build(BuildContext context) {
-    var appState = context.watch<MyAppState>();
-
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8.0),
       child: Slidable(
-        startActionPane: ActionPane(motion: const StretchMotion(), children: [
-          SlidableAction(
-            backgroundColor: Colors.orange,
-            icon: Icons.arrow_upward,
-            onPressed: (context) => _onDismissed(),
-          )
-        ]),
+        key: ValueKey(widget.index),
+        startActionPane: ActionPane(
+            motion: const StretchMotion(),
+            // extentRatio: 1 / 5,
+            children: [
+              SlidableAction(
+                backgroundColor: Color(0xFFff6c00),
+                autoClose: true,
+                icon: Icons.arrow_upward,
+                onPressed: (context) => {
+                  if (voteState != VoteState.upvoted) {
+                    setState(() {
+                      voteState = VoteState.upvoted;
+                    })
+                  } else {
+                    setState(() {
+                      voteState = VoteState.none;
+                    })
+                  }
+
+                },
+              ),
+              SlidableAction(
+                backgroundColor: Color(0xFF5560e2),
+                autoClose: true,
+                icon: Icons.arrow_downward,
+                onPressed: (context) => {
+                  if (voteState != VoteState.downvoted) {
+                    setState(() {
+                      voteState = VoteState.downvoted;
+                    })
+                  } else {
+                    setState(() {
+                      voteState = VoteState.none;
+                    })
+                  }
+                },
+              )
+            ]),
+        endActionPane: ActionPane(
+          motion: const StretchMotion(),
+          children: [
+            SlidableAction(
+              backgroundColor: Colors.blue,
+              autoClose: true,
+              icon: Icons.ios_share,
+              onPressed: (context) => _onDismissed(),
+            ),
+            SlidableAction(
+              backgroundColor: Colors.green,
+              autoClose: true,
+              icon: Icons.bookmark,
+              onPressed: (context) => _onDismissed(),
+            )
+          ],
+        ),
         child: Container(
-          color: theme.colorScheme.primaryContainer,
+          decoration: BoxDecoration(
+              color: widget.theme.colorScheme.primaryContainer,
+              border: switch (voteState) {
+                VoteState.upvoted =>
+                  Border(left: BorderSide(width: 5, color: Color(0xFFff6c00))),
+                VoteState.downvoted =>
+                  Border(left: BorderSide(width: 5, color: Color(0xFF5560e2))),
+                _ => null
+              }),
           child: Column(
             children: [
               Row(
@@ -215,13 +281,9 @@ class PostCard extends StatelessWidget {
                           const BorderRadius.all(Radius.circular(16.0)),
                       child: Container(
                         alignment: Alignment.center,
-                        decoration: BoxDecoration(
-                            border: Border(
-                                left: BorderSide(
-                                    width: 0, color: Colors.transparent))),
                         child: Image.network(
                             fit: BoxFit.fitHeight,
-                            width: 250,
+                            width: 350,
                             'https://media.tenor.com/ql5zFjnFEmMAAAAd/celeste-badeline.gif'),
                       ),
                     ),
