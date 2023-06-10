@@ -221,7 +221,7 @@ class PostCard extends StatelessWidget {
                                     width: 0, color: Colors.transparent))),
                         child: Image.network(
                             fit: BoxFit.fitHeight,
-                            width: 400,
+                            width: 250,
                             'https://media.tenor.com/ql5zFjnFEmMAAAAd/celeste-badeline.gif'),
                       ),
                     ),
