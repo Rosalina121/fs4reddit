@@ -185,9 +185,10 @@ class _PostCardState extends State<PostCard> {
         key: ValueKey(widget.index),
         startActionPane: ActionPane(
             motion: const StretchMotion(),
-            // extentRatio: 1 / 5,
+            extentRatio: 1 / 5,
             children: [
               SlidableAction(
+                flex: 2,
                 backgroundColor: Color(0xFFff6c00),
                 autoClose: true,
                 icon: Icons.arrow_upward,
