@@ -188,7 +188,7 @@ class _PostCardState extends State<PostCard> {
             extentRatio: 1 / 5,
             children: [
               SlidableAction(
-                flex: 2,
+                // flex: 2,
                 backgroundColor: Color(0xFFff6c00),
                 autoClose: true,
                 icon: Icons.arrow_upward,

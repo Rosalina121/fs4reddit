@@ -1,5 +1,5 @@
 # fs4reddit
-![image](https://github.com/Rosalina121/fs4reddit/assets/15912902/1dcc5655-90b5-4cdf-b34d-3cbc7bb1fc50)
+![Preview Image](repoAssets/ScreenWindows.png)
 ## Apollo cheap knockoff
 **fs4reddit** is a shameless clone (or a cheap knockoff) of Apollo for iOS.  
 Made because the CEO of Reddit drives the site and 3rd party apps straight to the ground, and what a better way to prepare for the corporate takeover of the market if not creating a silly app and learning Flutter along the way.
